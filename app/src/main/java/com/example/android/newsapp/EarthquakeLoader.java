@@ -25,7 +25,7 @@ import java.util.List;
  * Loads a list of earthquakes by using an AsyncTask to perform the
  * network request to the given URL.
  */
-public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>> {
+public class EarthquakeLoader extends AsyncTaskLoader<List<Story>> {
 
     /**
      * Tag for log messages
@@ -58,14 +58,14 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>> {
      * This is on a background thread.
      */
     @Override
-    public List<Earthquake> loadInBackground() {
+    public List<Story> loadInBackground() {
         Log.e("Loader", "after call of loadInBackground");
         if (mUrl == null) {
             return null;
         }
 
-        // Perform the network request, parse the response, and extract a list of earthquakes.
-        List<Earthquake> earthquakes = QueryUtils.fetchEarthquakeData(mUrl);
-        return earthquakes;
+        // Perform the network request, parse the response, and extract a list of stories.
+        List<Story> stories = QueryUtils.fetchEarthquakeData(mUrl);
+        return stories;
     }
 }
