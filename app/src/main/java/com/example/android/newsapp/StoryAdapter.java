@@ -30,13 +30,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * An {@link EarthquakeAdapter} knows how to create a list item layout for each earthquake
+ * An {@link StoryAdapter} knows how to create a list item layout for each item
  * in the data source (a list of {@link Story} objects).
  *
  * These list item layouts will be provided to an adapter view like ListView
  * to be displayed to the user.
  */
-public class EarthquakeAdapter extends ArrayAdapter<Story> {
+public class StoryAdapter extends ArrayAdapter<Story> {
 
     /**
      * The part of the location string from the USGS service that we use to determine
@@ -45,12 +45,12 @@ public class EarthquakeAdapter extends ArrayAdapter<Story> {
     private static final String LOCATION_SEPARATOR = " of ";
 
     /**
-     * Constructs a new {@link EarthquakeAdapter}.
+     * Constructs a new {@link StoryAdapter}.
      *
      * @param context of the app
      * @param stories is the list of stories, which is the data source of the adapter
      */
-    public EarthquakeAdapter(Context context, List<Story> stories) {
+    public StoryAdapter(Context context, List<Story> stories) {
         super(context, 0, stories);
     }
 
