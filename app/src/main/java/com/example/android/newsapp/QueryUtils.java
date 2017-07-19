@@ -30,7 +30,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,6 +46,11 @@ public final class QueryUtils {
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     /**
+     * Status when JSON response is ok
+     */
+    private static final String JSON_STATUS_OK = "ok";
+
+    /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
      * This class is only meant to hold static variables and methods, which can be accessed
      * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
@@ -54,8 +61,8 @@ public final class QueryUtils {
     /**
      * Query the USGS dataset and return a list of {@link Story} objects.
      */
-    public static List<Story> fetchEarthquakeData(String requestUrl) {
-        Log.e("Utils", "after call of fetchEarthquakeData");
+    public static List<Story> fetchStoryData(String requestUrl) {
+        Log.e("Utils", "after call of fetchStoryData");
         // Create URL object
         URL url = createUrl(requestUrl);
 
@@ -149,6 +156,104 @@ public final class QueryUtils {
         return output.toString();
     }
 
+
+    /**
+     * Return a list of {@link Story} objects that has been built up from
+     * parsing the given JSON response.
+     */
+    private static List<Story> extractStoryFeatureFromJson(String storyJSON) {
+        // If the JSON string is empty or null, then return early.
+        if (TextUtils.isEmpty(storyJSON)) {
+            return null;
+        }
+
+        // Create an empty ArrayList that we can start adding stories to
+        ArrayList<Story> stories = new ArrayList<>();
+
+        // Try to parse the JSON response string. If there's a problem with the way the JSON
+        // is formatted, a JSONException exception object will be thrown.
+        // Catch the exception so the app doesn't crash, and print the error message to the logs.
+        try {
+
+            // Create a JSONObject from the JSON response string
+            JSONObject baseJsonResponse = new JSONObject(storyJSON).getJSONObject("response");
+
+            // Check if json response is ok
+            if (!baseJsonResponse.getString("status").equals(JSON_STATUS_OK)) {
+                Log.e(LOG_TAG, "Bad status of json response");
+                return stories;
+            }
+
+            // Extract the JSONArray associated with the key called "results",
+            // which represents an array of news stories.
+            JSONArray storyArray = baseJsonResponse.getJSONArray("results");
+
+            // For each story in the storyArray, create an {@link Story} object
+            for (int i = 0; i < storyArray.length(); i++) {
+
+                // Get a single story at position i within the list of stories
+                JSONObject currentStory = storyArray.getJSONObject(i);
+
+                //Extract the story title
+                String title = currentStory.getString("webTitle");
+
+                //Extract the story date
+                String publicationDate = currentStory.getString("webPublicationDate");
+                Date date = null;
+                try {
+                    date  = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(publicationDate);
+                }
+                catch (Exception e){
+                    Log.e(LOG_TAG, "Error getting publication date: " + e);
+                }
+
+                //Extract the story's url
+                String storyUrl = currentStory.getString("webUrl");
+
+                //Extract the story's section
+                String section = currentStory.getString("sectionName");
+
+                //Extract the story's image
+                String imageUrl = "";
+                if (currentStory.has("fields")) {
+                    JSONObject fields = currentStory.getJSONObject("fields");
+                    if (fields.has("thumbnail"))
+                        imageUrl = fields.getString("thumbnail");
+                }
+
+                // Extract author names
+                ArrayList<String> authors = new ArrayList<>();
+                if (currentStory.has("tags")){
+                    JSONArray tags = currentStory.getJSONArray("tags");
+                    JSONObject tag;
+                    for (int j = 0; j < tags.length(); j++){
+                        tag = tags.getJSONObject(j);
+                        if (tag.has("webTitle"))
+                            authors.add(tag.getString("webTitle"));
+                    }
+                }
+
+
+                // Create a new {@link Story} object
+                Story story = new Story(title, authors, date, storyUrl, section, imageUrl);
+
+                // Add the new {@link Story} to the list of stories.
+                stories.add(story);
+            }
+
+        } catch (JSONException e) {
+            // If an error is thrown when executing any of the above statements in the "try" block,
+            // catch the exception here, so the app doesn't crash. Print a log message
+            // with the message from the exception.
+            Log.e(LOG_TAG, "Problem parsing the story JSON results", e);
+        }
+
+        // Return the list of stories
+        return stories;
+    }
+
+
+    // This is the Earthquake extract method. To be deleted when switched to Story
     /**
      * Return a list of {@link Story} objects that has been built up from
      * parsing the given JSON response.
