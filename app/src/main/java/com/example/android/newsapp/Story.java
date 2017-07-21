@@ -74,10 +74,13 @@ public class Story {
     /* Helper method to return all authors in one string */
     public String getAuthorsAsString(){
         StringBuilder builder = new StringBuilder();
-        if (mAuthors.isEmpty())
+        if (mAuthors == null && mAuthors.isEmpty()) {
             return "";
+        }
+
         for (String author : mAuthors){
-            builder.append(author + ", ");
+            builder.append(author);
+            builder.append(", ");
         }
         builder.delete(builder.length() - 2, builder.length() - 1);
         return builder.toString();
@@ -105,8 +108,8 @@ public class Story {
 
     /**
      * Website URL of the earthquake
+     *     private String mUrl;
      */
-    // private String mUrl;
 
     /**
      * Constructs a new {@link Story} object.

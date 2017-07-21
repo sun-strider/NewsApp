@@ -9,7 +9,7 @@
     android:weightSum="1">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/story_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
         app:layout_constraintHorizontal_bias="0.272"
@@ -26,17 +26,17 @@
         android:layout_height="32dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:text="TextView"
-        app:layout_constraintLeft_toRightOf="@+id/image"
+        android:text="Title"
+        app:layout_constraintLeft_toRightOf="@+id/story_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/story_section"
         android:layout_width="160dp"
         android:layout_height="24dp"
-        android:text="TextView"
+        android:text="Section"
         app:layout_constraintTop_toBottomOf="@+id/story_title"
-        app:layout_constraintLeft_toRightOf="@+id/image"
+        app:layout_constraintLeft_toRightOf="@+id/story_image"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="0dp" />
 
@@ -44,9 +44,9 @@
         android:id="@+id/story_author"
         android:layout_width="160dp"
         android:layout_height="24dp"
-        android:text="TextView"
+        android:text="Authors"
         app:layout_constraintTop_toBottomOf="@+id/story_section"
-        app:layout_constraintLeft_toRightOf="@+id/image"
+        app:layout_constraintLeft_toRightOf="@+id/story_image"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="0dp" />
 
@@ -57,7 +57,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:text="TextView"
+        android:text="Date"
         app:layout_constraintLeft_toRightOf="@+id/story_section"
         app:layout_constraintTop_toBottomOf="@+id/story_title" />
 

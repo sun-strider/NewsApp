@@ -1,18 +1,4 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.example.android.newsapp;
 
 import android.content.Context;
@@ -22,12 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * An {@link StoryAdapter} knows how to create a list item layout for each item
@@ -60,16 +50,44 @@ public class StoryAdapter extends ArrayAdapter<Story> {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        // Make a new ViewHolder
+        ViewHolder holder;
+
         // Check if there is an existing list item view (called convertView) that we can reuse,
         // otherwise, if convertView is null, then inflate a new list item layout.
         View listItemView = convertView;
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.earthquake_list_item, parent, false);
-        }
+            holder = new ViewHolder(convertView);
+        } else { holder = (ViewHolder) convertView.getTag(); }
+
 
         // Find the earthquake at the given position in the list of earthquakes
         Story currentStory = getItem(position);
+
+
+        /*
+        // Display story title
+        holder.titleTextView.setText(currentStory.getTitle());
+        // Display story author
+        holder.authorTextView.setText(currentStory.getAuthorsAsString());
+        // Display story publish date
+        Date date = currentStory.getDate();
+        if (date != null)
+            holder.dateTextView.setText(formatDate(date));
+        // Display story section
+        holder.sectionTextView.setText(currentStory.getSection());
+         // Display story thumbnail if available
+        String imageUrl = currentStory.getImageUrl();
+        if (imageUrl != null) {
+            // Display the image of the current book that View
+            Picasso.with(getContext()).load(imageUrl).into(holder.thumbnailImageView);
+        }
+        */
+
+
+        // Earthquake code below. Delete when switched to story ------------------------------
 
         // Find the TextView with view ID magnitude
         TextView magnitudeView = (TextView) listItemView.findViewById(R.id.magnitude);
@@ -142,8 +160,29 @@ public class StoryAdapter extends ArrayAdapter<Story> {
         // Display the time of the current earthquake in that TextView
         timeView.setText(formattedTime);
 
+        // End of Earthquake code .............................................................
+
+
         // Return the list item view that is now showing the appropriate data
         return listItemView;
+    }
+
+    /* Implement ViewHolder pattern for increased performance */
+    static class ViewHolder{
+        @BindView(R.id.story_title)
+        TextView titleTextView;
+        @BindView(R.id.story_author)
+        TextView authorTextView;
+        @BindView(R.id.story_date)
+        TextView dateTextView;
+        @BindView(R.id.story_section)
+        TextView sectionTextView;
+        @BindView(R.id.story_image)
+        ImageView thumbnailImageView;
+
+        public ViewHolder(View view){
+            ButterKnife.bind(this, view);
+        }
     }
 
     /**
