@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.android.newsapp"
-        minSdkVersion 15
+        minSdkVersion 25
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"

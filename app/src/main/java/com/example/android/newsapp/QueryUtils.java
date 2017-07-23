@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Helper methods related to requesting and receiving earthquake data from USGS.
+ * Helper methods related to requesting and receiving data from guardian news API
  */
 public final class QueryUtils {
 
@@ -123,7 +123,7 @@ public final class QueryUtils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the JSON results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -246,75 +246,6 @@ public final class QueryUtils {
             // catch the exception here, so the app doesn't crash. Print a log message
             // with the message from the exception.
             Log.e(LOG_TAG, "Problem parsing the story JSON results", e);
-        }
-
-        // Return the list of stories
-        return stories;
-    }
-
-
-    // This is the Earthquake extract method. To be deleted when switched to Story
-    /**
-     * Return a list of {@link Story} objects that has been built up from
-     * parsing the given JSON response.
-     */
-    private static List<Story> extractFeatureFromJson(String earthquakeJSON) {
-        // If the JSON string is empty or null, then return early.
-        if (TextUtils.isEmpty(earthquakeJSON)) {
-            return null;
-        }
-
-        // Create an empty ArrayList that we can start adding stories to
-        List<Story> stories = new ArrayList<>();
-
-        // Try to parse the JSON response string. If there's a problem with the way the JSON
-        // is formatted, a JSONException exception object will be thrown.
-        // Catch the exception so the app doesn't crash, and print the error message to the logs.
-        try {
-
-            // Create a JSONObject from the JSON response string
-            JSONObject baseJsonResponse = new JSONObject(earthquakeJSON);
-
-            // Extract the JSONArray associated with the key called "features",
-            // which represents a list of features (or stories).
-            JSONArray earthquakeArray = baseJsonResponse.getJSONArray("features");
-
-            // For each earthquake in the earthquakeArray, create an {@link Story} object
-            for (int i = 0; i < earthquakeArray.length(); i++) {
-
-                // Get a single story at position i within the list of stories
-                JSONObject currentEarthquake = earthquakeArray.getJSONObject(i);
-
-                // For a given story, extract the JSONObject associated with the
-                // key called "properties", which represents a list of all properties
-                // for that story.
-                JSONObject properties = currentEarthquake.getJSONObject("properties");
-
-                // Extract the value for the key called "mag"
-                double magnitude = properties.getDouble("mag");
-
-                // Extract the value for the key called "place"
-                String location = properties.getString("place");
-
-                // Extract the value for the key called "time"
-                long time = properties.getLong("time");
-
-                // Extract the value for the key called "url"
-                String url = properties.getString("url");
-
-                // Create a new {@link Story} object with the magnitude, location, time,
-                // and url from the JSON response.
-                Story story = new Story(magnitude, location, time, url);
-
-                // Add the new {@link Story} to the list of stories.
-                stories.add(story);
-            }
-
-        } catch (JSONException e) {
-            // If an error is thrown when executing any of the above statements in the "try" block,
-            // catch the exception here, so the app doesn't crash. Print a log message
-            // with the message from the exception.
-            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
         }
 
         // Return the list of stories

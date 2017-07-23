@@ -20,11 +20,14 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,12 +46,6 @@ public class NewsActivity extends AppCompatActivity
     /**
      * URL for earthquake data from the USGS dataset
      */
-    private static final String USGS_REQUEST_URL =
-            "https://earthquake.usgs.gov/fdsnws/event/1/query";
-
-    /**
-     * URL for earthquake data from the USGS dataset
-     */
     private static final String NEWS_REQUEST_URL =
             "https://content.guardianapis.com/search";
 
@@ -59,12 +56,16 @@ public class NewsActivity extends AppCompatActivity
      * Constant value for the earthquake loader ID. We can choose any integer.
      * This really only comes into play if you're using multiple loaders.
      */
-    private static final int EARTHQUAKE_LOADER_ID = 1;
+    private static final int NEWS_LOADER_ID = 1;
 
-    /** Adapter for the list of earthquakes */
+    /**
+     * Adapter for the list of earthquakes
+     */
     private StoryAdapter mAdapter;
 
-    /** TextView that is displayed when the list is empty */
+    /**
+     * TextView that is displayed when the list is empty
+     */
     private TextView mEmptyStateTextView;
 
     @Override
@@ -78,7 +79,7 @@ public class NewsActivity extends AppCompatActivity
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         newsListView.setEmptyView(mEmptyStateTextView);
 
-        // Create a new adapter that takes an empty list of earthquakes as input
+        // Create a new adapter that takes an empty list as input
         mAdapter = new StoryAdapter(this, new ArrayList<Story>());
 
         // Set the adapter on the {@link ListView}
@@ -86,18 +87,18 @@ public class NewsActivity extends AppCompatActivity
         newsListView.setAdapter(mAdapter);
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
-        // to open a website with more information about the selected earthquake.
+        // to open a website with more information about the selected list item
         newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Find the current earthquake that was clicked on
+                // Find the current item that was clicked on
                 Story currentStory = mAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri earthquakeUri = Uri.parse(currentStory.getUrl());
+                Uri storyUri = Uri.parse(currentStory.getUrl());
 
-                // Create a new intent to view the earthquake URI
-                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+                // Create a new intent to view the URI
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, storyUri);
 
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
@@ -119,7 +120,7 @@ public class NewsActivity extends AppCompatActivity
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+            loaderManager.initLoader(NEWS_LOADER_ID, null, this);
         } else {
             // Otherwise, display error
             // First, hide loading indicator so error message will be visible
@@ -134,23 +135,22 @@ public class NewsActivity extends AppCompatActivity
     @Override
     public Loader<List<Story>> onCreateLoader(int i, Bundle bundle) {
 
-/*
+
         // Get the preferences
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String section = sharedPrefs.getString(
                 getString(R.string.settings_select_section_key),
                 getString(R.string.settings_select_section_default));
 
-        String minDate = sharedPrefs.getString(
-                getString(R.string.settings_min_date_key),
-                getString(R.string.settings_min_date_default)
+        String maxDate = sharedPrefs.getString(
+                getString(R.string.settings_max_date_key),
+                getString(R.string.settings_max_date_default)
         );
 
 
         // Start building the URL with the base URL
-        Uri baseUri = Uri.parse(NEWS_REQUEST_TEST_URL);
+        Uri baseUri = Uri.parse(NEWS_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
-
 
 
         // Build URL with the preferences
@@ -161,38 +161,19 @@ public class NewsActivity extends AppCompatActivity
         // Show contributors / authors field
         uriBuilder.appendQueryParameter("show-tags", "contributor");
         // Which section
-        uriBuilder.appendQueryParameter("section", section);
+        if (!section.isEmpty()) {
+            uriBuilder.appendQueryParameter("section", section);
+        }
         // From which minimum date
-        uriBuilder.appendQueryParameter("from-date", minDate);
+        if (!maxDate.isEmpty()) {
+            uriBuilder.appendQueryParameter("to-date", maxDate);
+        }
+
+        Log.e(LOG_TAG, "This is the query URL after building: " + uriBuilder.toString());
 
 
-        // Build for Earthqueke URL. To delete -------------------------------------------
-        // Get the preferences
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String minMagnitude = sharedPrefs.getString(
-                getString(R.string.settings_min_magnitude_key),
-                getString(R.string.settings_min_magnitude_default));
-
-        String orderBy = sharedPrefs.getString(
-                getString(R.string.settings_order_by_key),
-                getString(R.string.settings_order_by_default)
-        );
-
-
-        // Start building the URL with the base URL
-      //  Uri baseUri = Uri.parse(USGS_REQUEST_URL);
-      //  Uri.Builder uriBuilder = baseUri.buildUpon();
-
-        // Build URL with the preferences
-        uriBuilder.appendQueryParameter("format", "geojson");
-        uriBuilder.appendQueryParameter("limit", "20");
-        uriBuilder.appendQueryParameter("minmag", minMagnitude);
-        uriBuilder.appendQueryParameter("orderby", orderBy);
-
-
-        */
         // Create a new loader for the given URL
-        return new StoryLoader(this, NEWS_REQUEST_TEST_URL);
+        return new StoryLoader(this, uriBuilder.toString());
 
     }
 
@@ -203,9 +184,9 @@ public class NewsActivity extends AppCompatActivity
         loadingIndicator.setVisibility(View.GONE);
 
         // Set empty state text to display "No stories found."
-        mEmptyStateTextView.setText(R.string.no_earthquakes);
+        mEmptyStateTextView.setText(R.string.no_stories);
 
-        // Clear the adapter of previous earthquake data
+        // Clear the adapter of previous data
         mAdapter.clear();
 
         // If there is a valid list of {@link Story}s, then add them to the adapter's

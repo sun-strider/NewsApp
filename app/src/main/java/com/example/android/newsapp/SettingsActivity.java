@@ -4,9 +4,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -16,18 +19,18 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.settings_activity);
     }
 
-    public static class EarthquakePreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
+    public static class PreferenceFragment extends android.preference.PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings_main);
 
-            Preference minMagnitude = findPreference(getString(R.string.settings_min_magnitude_key));
-            bindPreferenceSummaryToValue(minMagnitude);
+            Preference minDate = findPreference(getString(R.string.settings_max_date_key));
+            bindPreferenceSummaryToValue(minDate);
 
-            Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
-            bindPreferenceSummaryToValue(orderBy);
+            Preference selectSection = findPreference(getString(R.string.settings_select_section_key));
+            bindPreferenceSummaryToValue(selectSection);
         }
 
         @Override
@@ -41,6 +44,14 @@ public class SettingsActivity extends AppCompatActivity {
                     preference.setSummary(labels[prefIndex]);
                 }
             } else {
+                if (!stringValue.isEmpty()) {
+                    try {
+                        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(stringValue);
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(), "Date format must be YYYY-MM-DD", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }
                 preference.setSummary(stringValue);
             }
             return true;

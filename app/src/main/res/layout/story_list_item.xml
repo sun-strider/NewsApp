@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/standard_padding"
         android:text="Title"
-        android:textColor="@android:color/black"
+        android:textColor="@color/textColorTitle"
         app:layout_constraintLeft_toRightOf="@id/story_thumbnail"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/standard_padding"
         android:text="Section"
+        android:textColor="@color/textColorSecondaryText"
         app:layout_constraintTop_toBottomOf="@id/story_title"
         app:layout_constraintLeft_toRightOf="@id/story_thumbnail" />
 
@@ -45,6 +46,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/standard_padding"
         android:text="Authors"
+        android:textColor="@color/textColorSecondaryText"
         app:layout_constraintTop_toBottomOf="@id/story_section"
         app:layout_constraintLeft_toRightOf="@id/story_thumbnail" />
 
@@ -54,6 +56,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/standard_padding"
         android:text="Date"
+        android:textColor="@color/textColorSecondaryText"
         app:layout_constraintLeft_toRightOf="@+id/story_author"
         app:layout_constraintTop_toBottomOf="@id/story_title" />
 
