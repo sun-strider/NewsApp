@@ -24,7 +24,7 @@ public class Story {
     private String mSection;
 
     /* Story Image Url */
-    private String mImageUrl;
+    private String mThumbnailUrl;
 
     /**
      * Constructs a new {@link Story} object.
@@ -34,16 +34,16 @@ public class Story {
      * @param date     is the date of the story
      * @param url      is the website URL to find out more about the story
      * @param section  is the section of the story
-     * @param imageUrl is the url of the story image
+     * @param thumbnailUrl is the url of the story image
      */
 
-    public Story(String title, ArrayList<String> authors, Date date, String url, String section, String imageUrl) {
+    public Story(String title, ArrayList<String> authors, Date date, String url, String section, String thumbnailUrl) {
         this.mTitle = title;
         this.mAuthors = authors;
         this.mDate = date;
         this.mUrl = url;
         this.mSection = section;
-        this.mImageUrl = imageUrl;
+        this.mThumbnailUrl = thumbnailUrl;
     }
 
     /* Getter Methods */
@@ -67,14 +67,14 @@ public class Story {
         return mSection;
     }
 
-    public String getImageUrl() {
-        return mImageUrl;
+    public String getThumnailUrl() {
+        return mThumbnailUrl;
     }
 
     /* Helper method to return all authors in one string */
     public String getAuthorsAsString(){
         StringBuilder builder = new StringBuilder();
-        if (mAuthors == null && mAuthors.isEmpty()) {
+        if (mAuthors == null || mAuthors.isEmpty()) {
             return "";
         }
 

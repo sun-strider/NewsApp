@@ -75,7 +75,7 @@ public final class QueryUtils {
         }
 
         // Extract relevant fields from the JSON response and create a list of {@link Story}s
-        List<Story> stories = extractFeatureFromJson(jsonResponse);
+        List<Story> stories = extractStoryFeatureFromJson(jsonResponse);
 
         // Return the list of {@link Story}s
         return stories;
@@ -214,11 +214,11 @@ public final class QueryUtils {
                 String section = currentStory.getString("sectionName");
 
                 //Extract the story's image
-                String imageUrl = "";
+                String thumbnailUrl = null;
                 if (currentStory.has("fields")) {
                     JSONObject fields = currentStory.getJSONObject("fields");
                     if (fields.has("thumbnail"))
-                        imageUrl = fields.getString("thumbnail");
+                        thumbnailUrl = fields.getString("thumbnail");
                 }
 
                 // Extract author names
@@ -235,7 +235,7 @@ public final class QueryUtils {
 
 
                 // Create a new {@link Story} object
-                Story story = new Story(title, authors, date, storyUrl, section, imageUrl);
+                Story story = new Story(title, authors, date, storyUrl, section, thumbnailUrl);
 
                 // Add the new {@link Story} to the list of stories.
                 stories.add(story);

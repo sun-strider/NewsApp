@@ -8,15 +8,15 @@ import android.util.Log;
 import java.util.List;
 
 /**
- * Loads a list of earthquakes by using an AsyncTask to perform the
+ * Loads a list of items by using an AsyncTask to perform the
  * network request to the given URL.
  */
-public class EarthquakeLoader extends AsyncTaskLoader<List<Story>> {
+public class StoryLoader extends AsyncTaskLoader<List<Story>> {
 
     /**
      * Tag for log messages
      */
-    private static final String LOG_TAG = EarthquakeLoader.class.getName();
+    private static final String LOG_TAG = StoryLoader.class.getName();
 
     /**
      * Query URL
@@ -24,12 +24,12 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Story>> {
     private String mUrl;
 
     /**
-     * Constructs a new {@link EarthquakeLoader}.
+     * Constructs a new {@link StoryLoader}.
      *
      * @param context of the activity
      * @param url     to load data from
      */
-    public EarthquakeLoader(Context context, String url) {
+    public StoryLoader(Context context, String url) {
         super(context);
         mUrl = url;
     }

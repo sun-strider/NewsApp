@@ -20,12 +20,10 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,16 +35,25 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EarthquakeActivity extends AppCompatActivity
+public class NewsActivity extends AppCompatActivity
         implements LoaderCallbacks<List<Story>> {
 
-    private static final String LOG_TAG = EarthquakeActivity.class.getName();
+    private static final String LOG_TAG = NewsActivity.class.getName();
 
     /**
      * URL for earthquake data from the USGS dataset
      */
     private static final String USGS_REQUEST_URL =
             "https://earthquake.usgs.gov/fdsnws/event/1/query";
+
+    /**
+     * URL for earthquake data from the USGS dataset
+     */
+    private static final String NEWS_REQUEST_URL =
+            "https://content.guardianapis.com/search";
+
+    private static final String NEWS_REQUEST_TEST_URL =
+            "http://content.guardianapis.com/search?section=politics&api-key=test&show-tags=contributor&show-fields=thumbnail";
 
     /**
      * Constant value for the earthquake loader ID. We can choose any integer.
@@ -63,31 +70,31 @@ public class EarthquakeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.earthquake_activity);
+        setContentView(R.layout.news_activity);
 
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        ListView newsListView = (ListView) findViewById(R.id.list);
 
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        earthquakeListView.setEmptyView(mEmptyStateTextView);
+        newsListView.setEmptyView(mEmptyStateTextView);
 
         // Create a new adapter that takes an empty list of earthquakes as input
         mAdapter = new StoryAdapter(this, new ArrayList<Story>());
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(mAdapter);
+        newsListView.setAdapter(mAdapter);
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
         // to open a website with more information about the selected earthquake.
-        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Find the current earthquake that was clicked on
                 Story currentStory = mAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri earthquakeUri = Uri.parse(currentStory.getEUrl());
+                Uri earthquakeUri = Uri.parse(currentStory.getUrl());
 
                 // Create a new intent to view the earthquake URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
@@ -127,6 +134,39 @@ public class EarthquakeActivity extends AppCompatActivity
     @Override
     public Loader<List<Story>> onCreateLoader(int i, Bundle bundle) {
 
+/*
+        // Get the preferences
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String section = sharedPrefs.getString(
+                getString(R.string.settings_select_section_key),
+                getString(R.string.settings_select_section_default));
+
+        String minDate = sharedPrefs.getString(
+                getString(R.string.settings_min_date_key),
+                getString(R.string.settings_min_date_default)
+        );
+
+
+        // Start building the URL with the base URL
+        Uri baseUri = Uri.parse(NEWS_REQUEST_TEST_URL);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+
+
+        // Build URL with the preferences
+        // API Key
+        uriBuilder.appendQueryParameter("api-key", "test");
+        // Show article thumbnail field
+        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
+        // Show contributors / authors field
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        // Which section
+        uriBuilder.appendQueryParameter("section", section);
+        // From which minimum date
+        uriBuilder.appendQueryParameter("from-date", minDate);
+
+
+        // Build for Earthqueke URL. To delete -------------------------------------------
         // Get the preferences
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String minMagnitude = sharedPrefs.getString(
@@ -138,9 +178,10 @@ public class EarthquakeActivity extends AppCompatActivity
                 getString(R.string.settings_order_by_default)
         );
 
+
         // Start building the URL with the base URL
-        Uri baseUri = Uri.parse(USGS_REQUEST_URL);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
+      //  Uri baseUri = Uri.parse(USGS_REQUEST_URL);
+      //  Uri.Builder uriBuilder = baseUri.buildUpon();
 
         // Build URL with the preferences
         uriBuilder.appendQueryParameter("format", "geojson");
@@ -149,8 +190,10 @@ public class EarthquakeActivity extends AppCompatActivity
         uriBuilder.appendQueryParameter("orderby", orderBy);
 
 
+        */
         // Create a new loader for the given URL
-        return new EarthquakeLoader(this, uriBuilder.toString());
+        return new StoryLoader(this, NEWS_REQUEST_TEST_URL);
+
     }
 
     @Override

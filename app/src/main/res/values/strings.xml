@@ -29,6 +29,40 @@
     <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
     <string name="settings_title">Earthquake Settings</string>
 
+    <!-- Strings for minimum date dreference [CHAR LIMIT=30] -->
+    <string name="settings_min_date_title">Minimum News Date</string>
+    <string name="settings_min_date_key" translatable="false">min_date</string>
+    <string name="settings_min_date_default" translatable="false"></string>
+
+    <!-- Strings for section preference [CHAR LIMIT=30] -->
+    <string name="settings_select_section_title">Select Section</string>
+    <string name="settings_select_section_key" translatable="false">select_section</string>
+    <string name="settings_select_section_default" translatable="false"></string>
+
+
+    <!-- Label for section technology option [CHAR LIMIT=20] -->
+    <string name="settings_select_section_all_label">All Sections</string>
+    <string name="settings_select_section_all_value" translatable="false"></string>
+
+    <!-- Label for section technology option [CHAR LIMIT=20] -->
+    <string name="settings_select_section_technology_label">Technology</string>
+    <string name="settings_select_section_technology_value" translatable="false">politics</string>
+
+    <!-- Label for section politics option [CHAR LIMIT=20] -->
+    <string name="settings_select_section_politics_label">Politics</string>
+    <string name="settings_select_section_politics_value" translatable="false">politics</string>
+
+    <!-- Label for section society option [CHAR LIMIT=20] -->
+    <string name="settings_select_section_society_label">Society</string>
+    <string name="settings_select_section_society_value" translatable="false">society</string>
+
+    <!-- Label for section environment option [CHAR LIMIT=20] -->
+    <string name="settings_select_section_environment_label">Environment</string>
+    <string name="settings_select_section_environment_value" translatable="false">environment</string>
+
+
+
+
     <!-- Strings For Minimum Magnitude Preference [CHAR LIMIT=30] -->
     <string name="settings_min_magnitude_label">Minimum Magnitude</string>
     <string name="settings_min_magnitude_key" translatable="false">min_magnitude</string>

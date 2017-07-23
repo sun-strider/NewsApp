@@ -2,7 +2,6 @@
 package com.example.android.newsapp;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -22,11 +23,16 @@ import butterknife.ButterKnife;
 /**
  * An {@link StoryAdapter} knows how to create a list item layout for each item
  * in the data source (a list of {@link Story} objects).
- *
+ * <p>
  * These list item layouts will be provided to an adapter view like ListView
  * to be displayed to the user.
  */
 public class StoryAdapter extends ArrayAdapter<Story> {
+
+    /**
+     * Tag for the log messages
+     */
+    private static final String LOG_TAG = StoryAdapter.class.getSimpleName();
 
     /**
      * The part of the location string from the USGS service that we use to determine
@@ -50,6 +56,10 @@ public class StoryAdapter extends ArrayAdapter<Story> {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        // Find the item at the given position in the list
+        Story currentStory = getItem(position);
+
         // Make a new ViewHolder
         ViewHolder holder;
 
@@ -58,35 +68,40 @@ public class StoryAdapter extends ArrayAdapter<Story> {
         View listItemView = convertView;
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.earthquake_list_item, parent, false);
-            holder = new ViewHolder(convertView);
-        } else { holder = (ViewHolder) convertView.getTag(); }
+                    R.layout.story_list_item, parent, false);
+            holder = new ViewHolder(listItemView);
+            listItemView.setTag(holder);
+        }
 
+        // Get the tag of the current list item holder
+        holder = (ViewHolder) listItemView.getTag();
 
-        // Find the earthquake at the given position in the list of earthquakes
-        Story currentStory = getItem(position);
-
-
-        /*
         // Display story title
         holder.titleTextView.setText(currentStory.getTitle());
+
         // Display story author
         holder.authorTextView.setText(currentStory.getAuthorsAsString());
+
         // Display story publish date
         Date date = currentStory.getDate();
         if (date != null)
             holder.dateTextView.setText(formatDate(date));
+
         // Display story section
         holder.sectionTextView.setText(currentStory.getSection());
-         // Display story thumbnail if available
-        String imageUrl = currentStory.getImageUrl();
+
+        // Display story thumbnail if available
+        String imageUrl = currentStory.getThumnailUrl();
         if (imageUrl != null) {
             // Display the image of the current book that View
-            Picasso.with(getContext()).load(imageUrl).into(holder.thumbnailImageView);
+            Picasso.with(getContext())
+                    .load(imageUrl)
+                    .into(holder.thumbnailImageView);
         }
-        */
 
 
+
+        /*
         // Earthquake code below. Delete when switched to story ------------------------------
 
         // Find the TextView with view ID magnitude
@@ -162,13 +177,14 @@ public class StoryAdapter extends ArrayAdapter<Story> {
 
         // End of Earthquake code .............................................................
 
+        */
 
         // Return the list item view that is now showing the appropriate data
         return listItemView;
     }
 
     /* Implement ViewHolder pattern for increased performance */
-    static class ViewHolder{
+    static class ViewHolder {
         @BindView(R.id.story_title)
         TextView titleTextView;
         @BindView(R.id.story_author)
@@ -177,10 +193,10 @@ public class StoryAdapter extends ArrayAdapter<Story> {
         TextView dateTextView;
         @BindView(R.id.story_section)
         TextView sectionTextView;
-        @BindView(R.id.story_image)
+        @BindView(R.id.story_thumbnail)
         ImageView thumbnailImageView;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
     }
